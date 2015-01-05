@@ -1,0 +1,113 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+apply plugin: 'idea'
+
+def jdk8 = '1.8'
+sourceCompatibility = jdk8
+targetCompatibility = jdk8
+version = '1.0'
+
+buildscript{
+    repositories {
+        mavenCentral()
+    }
+
+    ext {
+        springVersion = "4.1.2.RELEASE"
+        springDataVersion = "1.7.1.RELEASE"
+        springSecurityVersion = "3.2.5.RELEASE"
+        jacksonVersion = "2.4.3"
+        hibernateVersion = "4.3.7.Final"
+        tomcatVersion = "7.0.57"
+
+    }
+
+    dependencies {
+        classpath('com.bmuschko:gradle-tomcat-plugin:2.0')
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //Spring
+    compile("org.springframework:spring-core:$springVersion")
+    compile("org.springframework:spring-webmvc:$springVersion")
+    compile("org.springframework:spring-beans:$springVersion")
+    compile("org.springframework:spring-orm:$springVersion")
+
+    //Spring Data
+    compile("org.springframework.data:spring-data-jpa:$springDataVersion")
+
+    //Spring Security
+    //compile("org.springframework.security:spring-security-core:$springSecurityVersion")
+    compile("org.springframework.security:spring-security-config:$springSecurityVersion")
+    compile("org.springframework.security:spring-security-web:$springSecurityVersion")
+
+    //Jackson
+    compile("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+
+    //Database & Hibernate
+    compile("org.hibernate:hibernate-core:$hibernateVersion")
+    compile("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+    compile('javax.validation:validation-api:1.1.0.Final')
+    compile('org.hibernate:hibernate-validator:5.1.3.Final')
+    compile('com.zaxxer:HikariCP:2.2.5')
+
+    //Mis en test compile pour éviter le bug au lancement de tomcat, et parcequ'on utilise pas h2 en prod
+    testCompile('com.h2database:h2:1.4.182')
+
+    compile("mysql:mysql-connector-java:5.1.33")
+
+    //Libs
+    providedCompile('javax.servlet:javax.servlet-api:3.1.0')
+    providedCompile('javax.servlet.jsp:jsp-api:2.2')
+    compile('commons-codec:commons-codec:1.9')
+    compile('commons-fileupload:commons-fileupload:1.3.1')
+    compile('org.apache.commons:commons-lang3:3.3.2')
+    /*Mis en provided pour eviter une LinkerError dans le plugin tomcat gradle*/
+    //providedCompile('org.slf4j:slf4j-log4j12:1.7.7')
+    /*Pour deployer sur le serveur si on a un ClassNotFoundException*/
+    compile('org.slf4j:slf4j-api:1.7.7')
+    runtime("org.slf4j:slf4j-log4j12:1.7.7")
+
+    //Tests
+    testCompile("org.springframework:spring-test:$springVersion")
+    testCompile('com.excilys.ebi.spring-dbunit:spring-dbunit-test:1.4.0')
+    testCompile('org.assertj:assertj-core:1.7.0')
+    testCompile('org.mockito:mockito-core:1.10.8')
+
+    //Tomcat
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion",
+            "org.apache.tomcat.embed:tomcat-embed-logging-log4j:$tomcatVersion"
+    tomcat("org.apache.tomcat:tomcat-coyote:${tomcatVersion}")
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:$tomcatVersion") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+}
+
+war {
+    baseName = 'gabbler-api'
+    version =  '0.2.0'
+}
+
+tomcat {
+    httpPort = 8082
+    httpsPort = 8083
+    enableSSL = false
+}
+
+tomcatRunWar {
+    contextPath = "/gabbler"
+}
+
+idea {
+    module {
+        jdkName = jdk8
+    }
+}

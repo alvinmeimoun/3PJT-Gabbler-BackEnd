@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <!-- USER -->
+    <USER ID="1" NICKNAME="alvinm93" FIRSTNAME="Alvin" LASTNAME="Meimoun" EMAIL="alvin.meimoun@gabbler.com"
+            PASSWORD="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" BIRTHDATE="1993-09-12 14:51:28"
+            GENDER="Male" DISPLAY_NAME="alvinm93"
+            CREATION_DATE="2014-11-05 10:15:26"  ACTIVATION_CODE="5CEF"
+            PASSWORD_CRYPT_MODE="SHA256" EMAIL_VALIDATED="true" ENABLED="true"
+            ACCOUNT_NON_EXPIRED="true" CREDENTIALS_NON_EXPIRED="true" ACCOUNT_NON_LOCKED="true" />
+
+    <USER ID="2" NICKNAME="foobar" FIRSTNAME="Foo" LASTNAME="Bar" EMAIL="foo.bar@gabbler.com"
+          PASSWORD="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" BIRTHDATE="1993-08-12 14:51:16"
+          GENDER="Female" DISPLAY_NAME="foobar"
+          CREATION_DATE="2014-10-05 10:15:26" ACTIVATION_CODE="5CFF"
+          PASSWORD_CRYPT_MODE="SHA256" EMAIL_VALIDATED="true" ENABLED="true"
+          ACCOUNT_NON_EXPIRED="true" CREDENTIALS_NON_EXPIRED="true" ACCOUNT_NON_LOCKED="true" />
+
+    <USER ID="3" NICKNAME="admin" FIRSTNAME="Admin" LASTNAME="Gabbler" EMAIL="admin@gabbler.com"
+          PASSWORD="8bb65ef7e3886ee77dfce43fa6314832d5f2f460e9de04a45813cbac8468abf1" BIRTHDATE="1991-06-21 14:51:16"
+          GENDER="Male" DISPLAY_NAME="Administrator"
+          CREATION_DATE="2013-10-05 10:15:26" ACTIVATION_CODE="1459"
+          PASSWORD_CRYPT_MODE="SHA256" EMAIL_VALIDATED="true" ENABLED="true"
+          ACCOUNT_NON_EXPIRED="true" CREDENTIALS_NON_EXPIRED="true" ACCOUNT_NON_LOCKED="true" />
+
+    <USER ID="4" NICKNAME="chevreasiatique" FIRSTNAME="Chèvre" LASTNAME="Asiatique" EMAIL="chevre.asiatiquer@gabbler.com"
+          PASSWORD="8bb65ef7e3886ee77dfce43fa6314832d5f2f460e9de04a45813cbac8468abf1" BIRTHDATE="1995-04-25 14:51:16"
+          GENDER="Female" DISPLAY_NAME="Chèvre Asiatique"
+          CREATION_DATE="2014-11-12 10:15:26" ACTIVATION_CODE="50FF"
+          PASSWORD_CRYPT_MODE="SHA256" EMAIL_VALIDATED="true" ENABLED="true"
+          ACCOUNT_NON_EXPIRED="true" CREDENTIALS_NON_EXPIRED="true" ACCOUNT_NON_LOCKED="true" />
+
+
+    <!-- ROLES -->
+    <ROLE ID="1" NAME="ROLE_USER"/>
+    <ROLE ID="2" NAME="ROLE_ADMIN"/>
+
+    <USER_ROLE ID_USER="1" ID_ROLE="1"/>
+    <USER_ROLE ID_USER="2" ID_ROLE="1"/>
+    <USER_ROLE ID_USER="3" ID_ROLE="1"/>
+    <USER_ROLE ID_USER="3" ID_ROLE="2"/>
+    <USER_ROLE ID_USER="4" ID_ROLE="1"/>
+
+</dataset>
