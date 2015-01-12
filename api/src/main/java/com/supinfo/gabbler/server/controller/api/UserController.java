@@ -9,13 +9,9 @@ import com.supinfo.gabbler.server.exception.user.UserAlreadyExistsException;
 import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
 import com.supinfo.gabbler.server.service.UserService;
 import com.supinfo.gabbler.server.utils.AuthHeaderUtil;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Alvin Meimoun
@@ -33,7 +29,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/password_change", method = RequestMethod.POST)
-    public void changePassword(HttpServletRequest request, @RequestBody ChangePassword changePassword) throws UserNotFoundException, InvalidPasswordException, InvalidTokenException, InvalidCredentialsException {
-        userService.changePassword(AuthHeaderUtil.getToken(request), changePassword);
+    public void changePassword(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestBody ChangePassword changePassword) throws UserNotFoundException, InvalidPasswordException, InvalidTokenException, InvalidCredentialsException {
+        userService.changePassword(token, changePassword);
     }
 }
