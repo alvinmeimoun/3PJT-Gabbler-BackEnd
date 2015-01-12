@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static com.supinfo.gabbler.server.repository.specifications.TokenSpecifications.tokenEqualUsername;
+
 @Service
 public class TokenService {
 
@@ -18,13 +20,15 @@ public class TokenService {
 
     /*Repository*/
 
+    @Transactional(readOnly = true)
     public Token findOne(String series){
         return tokenRepository.findOne(series);
     }
 
     @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
     public List<Token> findForUser(String username){
-        return tokenRepository.findAll(TokenSpecifications.tokenEqualUsername(username));
+        return tokenRepository.findAll(tokenEqualUsername(username));
     }
 
     @Transactional

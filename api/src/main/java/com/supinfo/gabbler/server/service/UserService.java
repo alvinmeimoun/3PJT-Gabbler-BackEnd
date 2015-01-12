@@ -1,9 +1,15 @@
 package com.supinfo.gabbler.server.service;
 
+import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
+import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
+import com.supinfo.gabbler.server.exception.user.InvalidCredentialsException;
+import com.supinfo.gabbler.server.exception.user.InvalidPasswordException;
 import com.supinfo.gabbler.server.exception.user.UserAlreadyExistsException;
+import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
 import com.supinfo.gabbler.server.repository.UserRepository;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.MathUtil;
@@ -23,9 +29,12 @@ import java.util.Locale;
 @Service
 public class UserService {
 
+    private static int MIN_PASSWORD_LENGTH = 4;
+
     @Resource
     UserRepository userRepository;
 
+    @Autowired TokenService tokenService;
     @Autowired RoleService roleService;
 
     @Transactional
@@ -63,6 +72,39 @@ public class UserService {
         return selectedStr.substring(0, 4).toUpperCase(Locale.ENGLISH);
     }
 
+    @Transactional
+    public void changePassword(String token, ChangePassword changePassword) throws UserNotFoundException, InvalidTokenException, InvalidCredentialsException, InvalidPasswordException {
+        User user = findUserForToken(token);
+
+        String oldCryptedPassword = EncryptionUtil.encodeToSHA256(changePassword.getOldPassword());
+        
+        if(!oldCryptedPassword.equals(user.getPassword())){
+            throw new InvalidCredentialsException();
+        }
+
+        if(changePassword.getNewPassword() == null || changePassword.getNewPassword().length() < MIN_PASSWORD_LENGTH){
+            throw new InvalidPasswordException();
+        }
+
+        String newCryptedPassword = EncryptionUtil.encodeToSHA256(changePassword.getNewPassword());
+        user.setPassword(newCryptedPassword);
+
+        userRepository.save(user);
+    }
+
+    public User findUserForToken(String token) throws InvalidTokenException, UserNotFoundException {
+        Token tokenObj = tokenService.findOne(token);
+        if(tokenObj == null){
+            throw new InvalidTokenException();
+        }
+
+        User user = findByNickname(tokenObj.getUsername());
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+
+        return user;
+    }
 
     /* REPOSITORY INTERFACE */
     public User findByNickname(String nickname){

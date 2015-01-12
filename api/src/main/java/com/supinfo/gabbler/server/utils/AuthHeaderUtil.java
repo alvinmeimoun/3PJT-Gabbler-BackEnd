@@ -14,11 +14,6 @@ public class AuthHeaderUtil {
         return StringUtils.isNotBlank(header) ? header : null;
     }
 
-    public static void addHeader(HttpServletResponse response, String userName) {
-        String encryptedValue = createAuthToken(userName);
-        response.setHeader(TOKEN_HEADER_NAME, encryptedValue);
-    }
-
     public static String createAuthToken(String userName) {
         return userName + "|" + System.currentTimeMillis();
     }
