@@ -1,9 +1,11 @@
 package com.supinfo.gabbler.server.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class LoginInfo {
 
-    private String username;
-    private String password;
+    private @NotNull String username;
+    private @NotNull String password;
 
     public String getUsername() {
         return username;

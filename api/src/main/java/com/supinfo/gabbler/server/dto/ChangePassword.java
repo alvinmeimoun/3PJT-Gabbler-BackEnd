@@ -1,9 +1,11 @@
 package com.supinfo.gabbler.server.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class ChangePassword {
 
-    private String oldPassword;
-    private String newPassword;
+    private @NotNull String oldPassword;
+    private @NotNull String newPassword;
 
     public String getOldPassword() {
         return oldPassword;

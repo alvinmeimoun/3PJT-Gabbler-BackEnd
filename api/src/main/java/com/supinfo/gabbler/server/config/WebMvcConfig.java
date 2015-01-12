@@ -1,5 +1,6 @@
 package com.supinfo.gabbler.server.config;
 
+import com.mangofactory.swagger.plugin.EnableSwagger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,8 +16,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import javax.servlet.MultipartConfigElement;
 import java.util.List;
 
+import static org.ajar.swaggermvcui.SwaggerSpringMvcUi.WEB_JAR_RESOURCE_PATTERNS;
+import static org.ajar.swaggermvcui.SwaggerSpringMvcUi.WEB_JAR_RESOURCE_LOCATION;
+import static org.ajar.swaggermvcui.SwaggerSpringMvcUi.WEB_JAR_VIEW_RESOLVER_PREFIX;
+import static org.ajar.swaggermvcui.SwaggerSpringMvcUi.WEB_JAR_VIEW_RESOLVER_SUFFIX;
+
 @EnableWebMvc
 @ComponentScan("com.supinfo.gabbler.server.controller")
+@EnableSwagger
 @EnableTransactionManagement
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
@@ -51,12 +58,16 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //super.addResourceHandlers(registry);                                                                                                                                           ,+
 
-        registry.addResourceHandler("/css/**").addResourceLocations("/static/css/").setCachePeriod(CACHE_PERIOD);
+        /*registry.addResourceHandler("/css/**").addResourceLocations("/static/css/").setCachePeriod(CACHE_PERIOD);
         registry.addResourceHandler("/img/**").addResourceLocations("/static/img/").setCachePeriod(CACHE_PERIOD);
         registry.addResourceHandler("/js/**").addResourceLocations("/static/js/").setCachePeriod(CACHE_PERIOD);
         registry.addResourceHandler("/fonts/**").addResourceLocations("/static/fonts/").setCachePeriod(CACHE_PERIOD);
         registry.addResourceHandler("/partial/**").addResourceLocations("/static/partial/").setCachePeriod(CACHE_PERIOD);
-        registry.addResourceHandler("/less/**").addResourceLocations("/static/less/").setCachePeriod(CACHE_PERIOD);
+        registry.addResourceHandler("/less/**").addResourceLocations("/static/less/").setCachePeriod(CACHE_PERIOD);*/
+
+        //SWAGGER
+        registry.addResourceHandler(WEB_JAR_RESOURCE_PATTERNS)
+                .addResourceLocations(WEB_JAR_RESOURCE_LOCATION).setCachePeriod(0);
     }
 
     /**
@@ -67,8 +78,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public InternalResourceViewResolver getInternalResourceViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix(JSP_PREFIX);
-        resolver.setSuffix(JSP_SUFFIX);
+        /*resolver.setPrefix(JSP_PREFIX);
+        resolver.setSuffix(JSP_SUFFIX);*/
+
+        //SWAGGER
+        resolver.setPrefix(WEB_JAR_VIEW_RESOLVER_PREFIX);
+        resolver.setSuffix(WEB_JAR_VIEW_RESOLVER_SUFFIX);
+
         return resolver;
     }
 

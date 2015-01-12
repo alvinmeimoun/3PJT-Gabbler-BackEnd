@@ -7,22 +7,27 @@ import com.supinfo.gabbler.server.exception.user.InvalidCredentialsException;
 import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
 import com.supinfo.gabbler.server.service.LoginService;
 import com.supinfo.gabbler.server.utils.AuthHeaderUtil;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
+@Api(value = "login", description = "Login operations", position = 1)
 public class LoginController {
 
     @Resource
     LoginService loginService;
 
-    @RequestMapping(value = "/api/login", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a new session", position = 1)
+    @RequestMapping(value = "/api/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public LoginResponse login(@RequestBody LoginInfo loginInfo) throws InvalidCredentialsException, UserNotFoundException {
         return loginService.login(loginInfo);
     }
 
-    @RequestMapping(value = "/api/logout", method = RequestMethod.GET)
+    @ApiOperation(value = "Logout current session")
+    @RequestMapping(value = "/api/logout", method = RequestMethod.GET, consumes = "application/json")
     public void logout(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token) throws InvalidTokenException {
         loginService.logout(token);
     }
