@@ -6,10 +6,7 @@ import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
-import com.supinfo.gabbler.server.exception.user.InvalidCredentialsException;
-import com.supinfo.gabbler.server.exception.user.InvalidPasswordException;
-import com.supinfo.gabbler.server.exception.user.UserAlreadyExistsException;
-import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
+import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +29,10 @@ import static org.mockito.Matchers.eq;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-    public static final User USER_DUPLICATED = new User().setEmail("chevre.asiatiquer@gabbler.com").setNickname("chevreasiatique").setId(2L).setPassword("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08");
+    public static final User USER_NOT_FOLLOWED = new User().setNickname("imnotfollwed").setId(3l);
+    public static final User USER_FOLLOWED = new User().setNickname("imfollwedyeahhh").setId(2l);
+    public static final User USER_DUPLICATED = new User().setEmail("chevre.asiatiquer@gabbler.com").setNickname("chevreasiatique").setId(2L).setPassword("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+            .addFollowing(USER_FOLLOWED);
     public static final User USER_SHOULD_RETURN_NULL = new User().setNickname("aaanull");
     public static final Subscription USER_SUBCRIPTION_DUPLICATED = new Subscription().setEmail("chevre.asiatiquer@gabbler.com").setNickname("chevreasiatique");
     public static final Subscription USER_SUBSCRIPTION = new Subscription().setNickname("foobar").setBirthdate(new Timestamp(911082880000l))
@@ -68,6 +68,9 @@ public class UserServiceTest {
                 thenReturn(Arrays.asList(new User[]{USER_DUPLICATED}));
         Mockito.when(userRepository.findByNickname(eq(USER_DUPLICATED.getNickname()))).thenReturn(USER_DUPLICATED);
         Mockito.when(userRepository.findOne(any(Specification.class))).thenReturn(USER_DUPLICATED);
+        Mockito.when(userRepository.findOne(eq(USER_DUPLICATED.getId()))).thenReturn(USER_DUPLICATED);
+        Mockito.when(userRepository.findOne(eq(USER_FOLLOWED.getId()))).thenReturn(USER_FOLLOWED);
+        Mockito.when(userRepository.findOne(eq(USER_NOT_FOLLOWED.getId()))).thenReturn(USER_NOT_FOLLOWED);
 
         Mockito.when(roleService.findOrCreateUserRole()).thenReturn(new Role().setId(1).setName("ROLE_USER"));
 
@@ -143,5 +146,37 @@ public class UserServiceTest {
             USER_DUPLICATED.setPassword("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08");
             throw e;
         }
+    }
+
+    @Test
+    public void should_always_find_user_by_id() throws UserNotFoundException {
+        assertThat(userService.findExistingUserById(USER_DUPLICATED.getId())).isNotNull();
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void should_always_find_user_by_id_but_throw_usernotfound_exception () throws UserNotFoundException {
+        userService.findExistingUserById(USER_SHOULD_RETURN_NULL.getId());
+    }
+
+    @Test
+    public void should_follow_user() throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException {
+        userService.follow(TOKEN_FOUND_STR, USER_NOT_FOLLOWED.getId());
+        USER_DUPLICATED.removeFollowing(USER_NOT_FOLLOWED);
+    }
+
+    @Test(expected = UserAlreadyFollowedException.class)
+    public void should_try_to_follow_user_already_followed_and_throw_exception() throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException {
+        userService.follow(TOKEN_FOUND_STR, USER_FOLLOWED.getId());
+    }
+
+    @Test
+    public void should_unfollow_user() throws UserNotFoundException, InvalidTokenException, UserNotFollowedException, UserAlreadyFollowedException {
+        userService.unfollow(TOKEN_FOUND_STR, USER_FOLLOWED.getId());
+        USER_DUPLICATED.addFollowing(USER_FOLLOWED);
+    }
+
+    @Test(expected = UserNotFollowedException.class)
+    public void should_try_to_unfollow_user_not_followed_and_throw_exception() throws UserNotFoundException, InvalidTokenException, UserNotFollowedException, UserAlreadyFollowedException {
+        userService.unfollow(TOKEN_FOUND_STR, USER_NOT_FOLLOWED.getId());
     }
 }

@@ -59,6 +59,10 @@ public class User {
     private @NotNull
     PasswordCryptMode passwordCryptMode = PasswordCryptMode.Plain;
 
+    private @NotNull Set<User> followings = new HashSet<>();
+
+    private @NotNull Set<User> followers = new HashSet<>();
+
     //Spring security declaration
     private @NotNull Boolean enabled = true;
 
@@ -239,6 +243,50 @@ public class User {
         return this;
     }
 
+    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(name = "USER_FOLLOW",
+            joinColumns = { @JoinColumn(name = "ID_FOLLOWER", nullable = false, updatable = false) },
+            inverseJoinColumns = {@JoinColumn(name = "ID_FOLLOWED", nullable = false, updatable = false)}
+    )
+    @Fetch(FetchMode.SUBSELECT)
+    public Set<User> getFollowings() {
+        return followings;
+    }
+
+    public User setFollowings(Set<User> followings) {
+        this.followings = followings;
+        return this;
+    }
+
+    public User addFollowing(User user) {
+        if (!followings.contains(user)) {
+            followings.add(user);
+        }
+        return this;
+    }
+
+    public User removeFollowing(User user) {
+        if (followings.contains(user)) {
+            followings.remove(user);
+        }
+        return this;
+    }
+
+    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(name = "USER_FOLLOW",
+            joinColumns = { @JoinColumn(name = "ID_FOLLOWED", nullable = false, updatable = false) },
+            inverseJoinColumns = {@JoinColumn(name = "ID_FOLLOWER", nullable = false, updatable = false)}
+    )
+    @Fetch(FetchMode.SUBSELECT)
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public User setFollowers(Set<User> followers) {
+        this.followers = followers;
+        return this;
+    }
+
     //Spring Security
     @Column(name = "ENABLED")
     public Boolean isEnabled() {
@@ -280,7 +328,7 @@ public class User {
         return this;
     }
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ROLE",
             joinColumns = { @JoinColumn(name = "ID_USER", nullable = false, updatable = false) },
             inverseJoinColumns = {@JoinColumn(name = "ID_ROLE", nullable = false, updatable = false)}
@@ -315,4 +363,64 @@ public class User {
     }
 
     //END Spring Security
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (emailValidated != user.emailValidated) return false;
+        if (accountNonExpired != null ? !accountNonExpired.equals(user.accountNonExpired) : user.accountNonExpired != null)
+            return false;
+        if (accountNonLocked != null ? !accountNonLocked.equals(user.accountNonLocked) : user.accountNonLocked != null)
+            return false;
+        if (activationCode != null ? !activationCode.equals(user.activationCode) : user.activationCode != null)
+            return false;
+        if (birthdate != null ? !birthdate.equals(user.birthdate) : user.birthdate != null) return false;
+        if (creationDate != null ? !creationDate.equals(user.creationDate) : user.creationDate != null) return false;
+        if (credentialsNonExpired != null ? !credentialsNonExpired.equals(user.credentialsNonExpired) : user.credentialsNonExpired != null)
+            return false;
+        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null) return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) return false;
+        if (enabled != null ? !enabled.equals(user.enabled) : user.enabled != null) return false;
+        if (firstname != null ? !firstname.equals(user.firstname) : user.firstname != null) return false;
+        if (gender != user.gender) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (lastname != null ? !lastname.equals(user.lastname) : user.lastname != null) return false;
+        if (nickname != null ? !nickname.equals(user.nickname) : user.nickname != null) return false;
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (passwordCryptMode != user.passwordCryptMode) return false;
+        if (phone != null ? !phone.equals(user.phone) : user.phone != null) return false;
+        if (phoneIndicator != null ? !phoneIndicator.equals(user.phoneIndicator) : user.phoneIndicator != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
+        result = 31 * result + (firstname != null ? firstname.hashCode() : 0);
+        result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (emailValidated ? 1 : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (phoneIndicator != null ? phoneIndicator.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (birthdate != null ? birthdate.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        result = 31 * result + (activationCode != null ? activationCode.hashCode() : 0);
+        result = 31 * result + (passwordCryptMode != null ? passwordCryptMode.hashCode() : 0);
+        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
+        result = 31 * result + (accountNonExpired != null ? accountNonExpired.hashCode() : 0);
+        result = 31 * result + (credentialsNonExpired != null ? credentialsNonExpired.hashCode() : 0);
+        result = 31 * result + (accountNonLocked != null ? accountNonLocked.hashCode() : 0);
+        return result;
+    }
 }

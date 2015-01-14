@@ -46,4 +46,24 @@ public class Token {
         this.lastUsed = lastUsed;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Token token = (Token) o;
+
+        if (!series.equals(token.series)) return false;
+        if (!username.equals(token.username)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username.hashCode();
+        result = 31 * result + series.hashCode();
+        return result;
+    }
 }

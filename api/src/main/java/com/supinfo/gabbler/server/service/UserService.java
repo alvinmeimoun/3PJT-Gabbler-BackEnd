@@ -6,10 +6,7 @@ import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
-import com.supinfo.gabbler.server.exception.user.InvalidCredentialsException;
-import com.supinfo.gabbler.server.exception.user.InvalidPasswordException;
-import com.supinfo.gabbler.server.exception.user.UserAlreadyExistsException;
-import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
+import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.MathUtil;
@@ -106,6 +103,40 @@ public class UserService {
         return user;
     }
 
+    public void follow(String token, Long userId) throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException {
+        User loggedUser = findUserForToken(token);
+        User toFollowUser = findExistingUserById(userId);
+
+        if(loggedUser.getFollowings().contains(toFollowUser)){
+            throw new UserAlreadyFollowedException();
+        }
+
+        loggedUser.addFollowing(toFollowUser);
+        userRepository.save(loggedUser);
+    }
+
+    public void unfollow(String token, Long userId) throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException, UserNotFollowedException {
+        User loggedUser = findUserForToken(token);
+        User toUnfollowUser = findExistingUserById(userId);
+
+        if(!loggedUser.getFollowings().contains(toUnfollowUser)){
+            throw new UserNotFollowedException();
+        }
+
+        loggedUser.removeFollowing(toUnfollowUser);
+        userRepository.save(loggedUser);
+    }
+
+    public User findExistingUserById(Long userId) throws UserNotFoundException {
+        User toFindUser = findById(userId);
+
+        if(toFindUser == null){
+            throw new UserNotFoundException();
+        }
+
+        return toFindUser;
+    }
+
     /* REPOSITORY INTERFACE */
     public User findByNickname(String nickname){
         return userRepository.findByNickname(nickname);
@@ -114,5 +145,9 @@ public class UserService {
     @SuppressWarnings("unchecked")
     public User findByEmail(String email) {
         return (User) userRepository.findOne(UserSpecifications.userEqualEmail(email));
+    }
+
+    public User findById(Long id){
+        return userRepository.findOne(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.supinfo.gabbler.server.controller.controllerAdvice;
 
+import com.supinfo.gabbler.server.exception.AbstractApiException;
 import com.supinfo.gabbler.server.exception.user.InvalidCredentialsException;
 import com.supinfo.gabbler.server.exception.user.InvalidPasswordException;
 import com.supinfo.gabbler.server.exception.user.UserAlreadyExistsException;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserControllerAdvice {
 
-    @ExceptionHandler(value = InvalidCredentialsException.class)
+    /*@ExceptionHandler(value = InvalidCredentialsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public InvalidCredentialsException invalidCredentials(InvalidCredentialsException exception) {
         return exception;
@@ -36,5 +37,11 @@ public class UserControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public InvalidPasswordException invalidPassword(InvalidPasswordException exception) {
         return exception;
+    }*/
+
+    @ExceptionHandler(value = AbstractApiException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String invalidPassword(AbstractApiException exception) {
+        return exception.getClass().getName()+" : "+exception.getLocalizedMessage();
     }
 }
