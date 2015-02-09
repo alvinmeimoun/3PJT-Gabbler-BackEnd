@@ -11,6 +11,9 @@ import com.supinfo.gabbler.server.repository.GabsRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class GabsService {
@@ -69,6 +72,29 @@ public class GabsService {
         gab.removeLiker(loggedUser);
 
         return gabsRepository.save(gab);
+    }
+
+    public List<Gabs> userTimeline(Long userId, Integer startIndex, Integer count){
+        List<Gabs> gabs = gabsRepository.findByUserId(userId);
+        gabs.sort(new Comparator<Gabs>() {
+            @Override
+            public int compare(Gabs o1, Gabs o2) {
+                if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return -1;
+                else if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return 1;
+                else return 0;
+            }
+        });
+
+        try{
+            return gabs.subList(startIndex, startIndex+count);
+        } catch (IndexOutOfBoundsException e){
+            try{
+                return gabs.subList(startIndex, gabs.size());
+            } catch (IndexOutOfBoundsException e1){
+                return new ArrayList<>();
+            }
+        }
+
     }
 
 }

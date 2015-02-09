@@ -6,6 +6,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class Gabs {
 
     private @NotNull Long userId;
 
-    private @NotNull String content;
+    private @NotNull @Size(max = 255) String content;
     private @NotNull Date postDate;
 
     private @NotNull Set<User> likers = new HashSet<>();

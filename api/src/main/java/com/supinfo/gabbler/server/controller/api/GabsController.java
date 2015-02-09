@@ -13,6 +13,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RequestMapping("/api/gabs")
 @RestController
@@ -44,6 +45,15 @@ public class GabsController {
     @RequestMapping(value = "/unlike", method = RequestMethod.PUT, produces = "application/json")
     public Gabs unlike(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "gabsId", required = true) Long gabsId) throws UserNotFoundException, InvalidTokenException, ResourceNotFoundException {
         return gabsService.unlike(token, gabsId);
+    }
+
+    @ApiOperation(value = "Get all user", position = 5)
+    @RequestMapping(value = "/timeline/user", method = RequestMethod.GET, produces = "application/json")
+    public List<Gabs> userTimeline(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token,
+                                   @RequestParam(value = "userId") Long userId,
+                                   @RequestParam(value = "startIndex", required = false, defaultValue = "0") Integer startIndex,
+                                   @RequestParam(value = "count", required = false, defaultValue = "20") Integer count){
+        return gabsService.userTimeline(userId, startIndex, count);
     }
 
 }
