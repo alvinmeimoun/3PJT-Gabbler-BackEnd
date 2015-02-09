@@ -43,4 +43,32 @@ public class GabsService {
         gabsRepository.delete(gab);
     }
 
+    public Gabs like(String token, Long gabsId) throws ResourceNotFoundException, UserNotFoundException, InvalidTokenException {
+        Gabs gab = gabsRepository.findOne(gabsId);
+
+        if(gab == null){
+            throw new ResourceNotFoundException();
+        }
+
+        User loggedUser = userService.findUserForToken(token);
+
+        gab.addLiker(loggedUser);
+
+        return gabsRepository.save(gab);
+    }
+
+    public Gabs unlike(String token, Long gabsId) throws ResourceNotFoundException, UserNotFoundException, InvalidTokenException {
+        Gabs gab = gabsRepository.findOne(gabsId);
+
+        if(gab == null){
+            throw new ResourceNotFoundException();
+        }
+
+        User loggedUser = userService.findUserForToken(token);
+
+        gab.removeLiker(loggedUser);
+
+        return gabsRepository.save(gab);
+    }
+
 }

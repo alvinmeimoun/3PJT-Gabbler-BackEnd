@@ -34,4 +34,16 @@ public class GabsController {
         gabsService.delete(token, gabsId);
     }
 
+    @ApiOperation(value = "Like a gabs", position = 3)
+    @RequestMapping(value = "/like", method = RequestMethod.PUT, produces = "application/json")
+    public Gabs like(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "gabsId", required = true) Long gabsId) throws UserNotFoundException, InvalidTokenException, ResourceNotFoundException {
+        return gabsService.like(token, gabsId);
+    }
+
+    @ApiOperation(value = "Unlike a gabs", position = 4)
+    @RequestMapping(value = "/unlike", method = RequestMethod.PUT, produces = "application/json")
+    public Gabs unlike(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "gabsId", required = true) Long gabsId) throws UserNotFoundException, InvalidTokenException, ResourceNotFoundException {
+        return gabsService.unlike(token, gabsId);
+    }
+
 }
