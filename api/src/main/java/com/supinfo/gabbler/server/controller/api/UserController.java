@@ -8,6 +8,7 @@ import com.supinfo.gabbler.server.service.UserService;
 import com.supinfo.gabbler.server.utils.AuthHeaderUtil;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,12 +31,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "Change password", position = 2)
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/password_change", method = RequestMethod.POST, consumes = "application/json")
     public void changePassword(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestBody ChangePassword changePassword) throws UserNotFoundException, InvalidPasswordException, InvalidTokenException, InvalidCredentialsException {
         userService.changePassword(token, changePassword);
     }
 
     @ApiOperation(value = "Unfollow a user", position = 4)
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/unfollow", method = RequestMethod.PUT)
     public void unfollow(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId)
             throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException, UserNotFollowedException {
@@ -43,6 +46,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Follow a user", position = 3)
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/follow", method = RequestMethod.PUT)
     public void follow(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId)
             throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException, UserNotFollowedException {

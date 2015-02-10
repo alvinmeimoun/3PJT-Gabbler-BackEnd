@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
@@ -51,6 +52,16 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                     }
                 }
             }
+
+            if(response instanceof HttpServletResponse){
+                HttpServletResponse  httpResponse = (HttpServletResponse)response;
+                httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+                httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+                httpResponse.setHeader("Access-Control-Max-Age", "3600");
+                httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+                response = httpResponse;
+            }
+
             filterChain.doFilter(request, response);
         }
         finally {
