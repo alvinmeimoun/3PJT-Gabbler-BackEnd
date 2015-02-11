@@ -9,6 +9,7 @@ import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
+import com.supinfo.gabbler.server.repository.specifications.SpecificationsAndFactory;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.MathUtil;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
@@ -157,6 +158,10 @@ public class UserService {
 
         //update
         return userRepository.save(user);
+    }
+
+    public List<User> search(String searchRequest){
+        return userRepository.findAll(UserSpecifications.userLikeDisplayNameOrNickname(searchRequest));
     }
 
     //END API calls

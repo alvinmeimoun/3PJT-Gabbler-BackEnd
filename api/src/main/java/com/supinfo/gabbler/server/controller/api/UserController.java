@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Alvin Meimoun
@@ -67,5 +68,12 @@ public class UserController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public User update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestBody User user) throws UserNotFoundException, InvalidTokenException, OperationNotAllowedException {
         return userService.updateUserInformations(token, user);
+    }
+
+    @ApiOperation(value = "Search user by displayName or nickname", position = 8)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public List<User> update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "req") String searchRequest) {
+        return userService.search(searchRequest);
     }
 }
