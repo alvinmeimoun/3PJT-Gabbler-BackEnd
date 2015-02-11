@@ -6,6 +6,7 @@ import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
+import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
@@ -127,7 +128,7 @@ public class UserService {
         userRepository.save(loggedUser);
     }
 
-    public User getUserDetails(String token, Long userId) throws UserNotFoundException, InvalidTokenException {
+    public User getUserInformations(String token, Long userId) throws UserNotFoundException, InvalidTokenException {
         if(token != null){
             User loggedUser = findUserForToken(token);
 
@@ -135,6 +136,27 @@ public class UserService {
         }
 
         return findExistingUserById(userId);
+    }
+
+    public User updateUserInformations(String token, User user) throws UserNotFoundException, InvalidTokenException, OperationNotAllowedException {
+        User loggedUser = findUserForToken(token);
+
+        if(!loggedUser.getId().equals(user.getId())){
+            throw new OperationNotAllowedException();
+        }
+
+        //Set JSON ignored and constant values to new user
+        user.setPassword(loggedUser.getPassword()).setActivationCode(loggedUser.getActivationCode())
+                .setPasswordCryptMode(loggedUser.getPasswordCryptMode())
+                .setEnabled(loggedUser.isEnabled())
+                .setAccountNonExpired(loggedUser.isAccountNonExpired())
+                .setCredentialsNonExpired(loggedUser.isCredentialsNonExpired())
+                .setAccountNonLocked(loggedUser.isAccountNonLocked())
+                .setRoles(loggedUser.getRoles())
+                .setNickname(loggedUser.getNickname());
+
+        //update
+        return userRepository.save(user);
     }
 
     //END API calls

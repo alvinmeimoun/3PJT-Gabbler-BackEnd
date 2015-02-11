@@ -4,6 +4,7 @@ import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.Subscription;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
+import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.service.UserService;
 import com.supinfo.gabbler.server.utils.AuthHeaderUtil;
@@ -54,11 +55,17 @@ public class UserController {
         userService.follow(token, userId);
     }
 
-    @ApiOperation(value = "Follow a user", position = 6)
+    @ApiOperation(value = "Get user informations", position = 6)
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public User get(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId) throws UserNotFoundException, InvalidTokenException {
-        return userService.getUserDetails(token, userId);
+        return userService.getUserInformations(token, userId);
     }
 
+    @ApiOperation(value = "Update user informations", position = 7)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public User update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestBody User user) throws UserNotFoundException, InvalidTokenException, OperationNotAllowedException {
+        return userService.updateUserInformations(token, user);
+    }
 }
