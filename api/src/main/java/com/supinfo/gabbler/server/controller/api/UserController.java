@@ -2,6 +2,7 @@ package com.supinfo.gabbler.server.controller.api;
 
 import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.service.UserService;
@@ -45,12 +46,19 @@ public class UserController {
         userService.unfollow(token, userId);
     }
 
-    @ApiOperation(value = "Follow a user", position = 3)
+    @ApiOperation(value = "Follow a user", position = 5)
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/follow", method = RequestMethod.PUT)
     public void follow(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId)
             throws UserNotFoundException, InvalidTokenException, UserAlreadyFollowedException, UserNotFollowedException {
         userService.follow(token, userId);
+    }
+
+    @ApiOperation(value = "Follow a user", position = 6)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public User get(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId) throws UserNotFoundException, InvalidTokenException {
+        return userService.getUserDetails(token, userId);
     }
 
 }

@@ -127,6 +127,18 @@ public class UserService {
         userRepository.save(loggedUser);
     }
 
+    public User getUserDetails(String token, Long userId) throws UserNotFoundException, InvalidTokenException {
+        if(token != null){
+            User loggedUser = findUserForToken(token);
+
+            if(loggedUser.getId().equals(userId)) return loggedUser;
+        }
+
+        return findExistingUserById(userId);
+    }
+
+    //END API calls
+
     public User findExistingUserById(Long userId) throws UserNotFoundException {
         User toFindUser = findById(userId);
 

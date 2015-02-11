@@ -64,14 +64,19 @@ public class User {
     private @NotNull Set<User> followers = new HashSet<>();
 
     //Spring security declaration
+    @JsonIgnore
     private @NotNull Boolean enabled = true;
 
+    @JsonIgnore
     private @NotNull Boolean accountNonExpired = true;
 
+    @JsonIgnore
     private @NotNull Boolean credentialsNonExpired = true;
 
+    @JsonIgnore
     private @NotNull Boolean accountNonLocked = true;
 
+    @JsonIgnore
     private @NotNull Set<Role> roles = new HashSet<>();
 
     /* END VARIABLE DECLARATION */
@@ -372,55 +377,16 @@ public class User {
 
         User user = (User) o;
 
-        if (emailValidated != user.emailValidated) return false;
-        if (accountNonExpired != null ? !accountNonExpired.equals(user.accountNonExpired) : user.accountNonExpired != null)
-            return false;
-        if (accountNonLocked != null ? !accountNonLocked.equals(user.accountNonLocked) : user.accountNonLocked != null)
-            return false;
-        if (activationCode != null ? !activationCode.equals(user.activationCode) : user.activationCode != null)
-            return false;
-        if (birthdate != null ? !birthdate.equals(user.birthdate) : user.birthdate != null) return false;
-        if (creationDate != null ? !creationDate.equals(user.creationDate) : user.creationDate != null) return false;
-        if (credentialsNonExpired != null ? !credentialsNonExpired.equals(user.credentialsNonExpired) : user.credentialsNonExpired != null)
-            return false;
-        if (displayName != null ? !displayName.equals(user.displayName) : user.displayName != null) return false;
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
-        if (enabled != null ? !enabled.equals(user.enabled) : user.enabled != null) return false;
-        if (firstname != null ? !firstname.equals(user.firstname) : user.firstname != null) return false;
-        if (gender != user.gender) return false;
-        if (id != null ? !id.equals(user.id) : user.id != null) return false;
-        if (lastname != null ? !lastname.equals(user.lastname) : user.lastname != null) return false;
-        if (nickname != null ? !nickname.equals(user.nickname) : user.nickname != null) return false;
-        if (password != null ? !password.equals(user.password) : user.password != null) return false;
-        if (passwordCryptMode != user.passwordCryptMode) return false;
-        if (phone != null ? !phone.equals(user.phone) : user.phone != null) return false;
-        if (phoneIndicator != null ? !phoneIndicator.equals(user.phoneIndicator) : user.phoneIndicator != null)
-            return false;
+        if (!id.equals(user.id)) return false;
+        if (!nickname.equals(user.nickname)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
-        result = 31 * result + (firstname != null ? firstname.hashCode() : 0);
-        result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (emailValidated ? 1 : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (phoneIndicator != null ? phoneIndicator.hashCode() : 0);
-        result = 31 * result + (phone != null ? phone.hashCode() : 0);
-        result = 31 * result + (birthdate != null ? birthdate.hashCode() : 0);
-        result = 31 * result + (gender != null ? gender.hashCode() : 0);
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (activationCode != null ? activationCode.hashCode() : 0);
-        result = 31 * result + (passwordCryptMode != null ? passwordCryptMode.hashCode() : 0);
-        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
-        result = 31 * result + (accountNonExpired != null ? accountNonExpired.hashCode() : 0);
-        result = 31 * result + (credentialsNonExpired != null ? credentialsNonExpired.hashCode() : 0);
-        result = 31 * result + (accountNonLocked != null ? accountNonLocked.hashCode() : 0);
+        int result = id.hashCode();
+        result = 31 * result + nickname.hashCode();
         return result;
     }
 }
