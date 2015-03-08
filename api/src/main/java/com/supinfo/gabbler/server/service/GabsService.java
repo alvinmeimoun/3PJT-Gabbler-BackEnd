@@ -3,7 +3,6 @@ package com.supinfo.gabbler.server.service;
 import com.supinfo.gabbler.server.dto.GabsDTO;
 import com.supinfo.gabbler.server.dto.GabsLikerDTO;
 import com.supinfo.gabbler.server.entity.Gabs;
-import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.ResourceNotFoundException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
@@ -90,8 +89,16 @@ public class GabsService {
         gabsEntities.stream().forEach(g -> {
             GabsDTO gdto = new GabsDTO();
             gdto.setContent(g.getContent());
+            gdto.setUserId(g.getUserId());
             gdto.setId(g.getId());
             gdto.setPostDate(g.getPostDate());
+            try {
+                gdto.setDisplayName(userService.findExistingUserById(g.getUserId()).getDisplayName());
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+                gdto.setDisplayName("Utilisateur Inconnu");
+            }
+
 
             g.getLikers().stream().forEach(l -> {
                 GabsLikerDTO ldto = new GabsLikerDTO();
@@ -144,7 +151,14 @@ public class GabsService {
             GabsDTO gdto = new GabsDTO();
             gdto.setContent(g.getContent());
             gdto.setId(g.getId());
+            gdto.setUserId(g.getUserId());
             gdto.setPostDate(g.getPostDate());
+            try {
+                gdto.setDisplayName(userService.findExistingUserById(g.getUserId()).getDisplayName());
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+                gdto.setDisplayName("Utilisateur Inconnu");
+            }
 
             g.getLikers().stream().forEach(l -> {
                 GabsLikerDTO ldto = new GabsLikerDTO();

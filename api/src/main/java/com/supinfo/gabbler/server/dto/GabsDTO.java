@@ -1,7 +1,5 @@
 package com.supinfo.gabbler.server.dto;
 
-import com.supinfo.gabbler.server.entity.User;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -24,6 +22,8 @@ public class GabsDTO {
 
     private @NotNull
     Set<GabsLikerDTO> likers = new HashSet<>();
+
+    private @NotNull String displayName;
 
     public GabsDTO(){
         this.likers = new HashSet<>();
@@ -67,5 +67,13 @@ public class GabsDTO {
 
     public void setLikers(Set<GabsLikerDTO> likers) {
         this.likers = likers;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
