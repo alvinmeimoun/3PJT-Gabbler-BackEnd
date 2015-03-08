@@ -2,6 +2,7 @@ package com.supinfo.gabbler.server.service;
 
 import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
@@ -55,7 +56,8 @@ public class UserService {
 
         newUser.setPassword(EncryptionUtil.encodeToSHA256(subscription.getPassword()));
 
-        newUser.addRoles(roleService.findOrCreateUserRole());
+        Role userRole = roleService.findOrCreateUserRole();
+        newUser.addRoles(userRole);
 
         return save(newUser);
     }

@@ -377,16 +377,16 @@ public class User {
 
         User user = (User) o;
 
-        if (!id.equals(user.id)) return false;
-        if (!nickname.equals(user.nickname)) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (nickname != null ? !nickname.equals(user.nickname) : user.nickname != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + nickname.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
         return result;
     }
 }
