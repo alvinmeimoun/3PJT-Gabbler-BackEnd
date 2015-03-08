@@ -1,5 +1,6 @@
 package com.supinfo.gabbler.server.controller.api;
 
+import com.supinfo.gabbler.server.dto.GabsDTO;
 import com.supinfo.gabbler.server.entity.Gabs;
 import com.supinfo.gabbler.server.exception.ResourceNotFoundException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
@@ -52,14 +53,23 @@ public class GabsController {
         return gabsService.unlike(token, gabsId);
     }
 
-    @ApiOperation(value = "Get all user", position = 5)
+    @ApiOperation(value = "Get all user's gabs", position = 5)
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/timeline/user", method = RequestMethod.GET, produces = "application/json")
-    public List<Gabs> userTimeline(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token,
+    public List<GabsDTO> userTimeline(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token,
                                    @RequestParam(value = "userId") Long userId,
                                    @RequestParam(value = "startIndex", required = false, defaultValue = "0") Integer startIndex,
                                    @RequestParam(value = "count", required = false, defaultValue = "20") Integer count){
         return gabsService.userTimeline(userId, startIndex, count);
+    }
+
+    @ApiOperation(value = "Get global gabs timeline", position = 6)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/timeline", method = RequestMethod.GET, produces = "application/json")
+    public List<GabsDTO> globalTimeline(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token,
+                                   @RequestParam(value = "startIndex", required = false, defaultValue = "0") Integer startIndex,
+                                   @RequestParam(value = "count", required = false, defaultValue = "20") Integer count) throws UserNotFoundException, InvalidTokenException {
+        return gabsService.globalTimeline(token, startIndex, count);
     }
 
 }

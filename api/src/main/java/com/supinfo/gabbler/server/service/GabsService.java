@@ -1,5 +1,7 @@
 package com.supinfo.gabbler.server.service;
 
+import com.supinfo.gabbler.server.dto.GabsDTO;
+import com.supinfo.gabbler.server.dto.GabsLikerDTO;
 import com.supinfo.gabbler.server.entity.Gabs;
 import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.User;
@@ -8,12 +10,11 @@ import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.UserNotFoundException;
 import com.supinfo.gabbler.server.repository.GabsRepository;
+import com.supinfo.gabbler.server.repository.specifications.GabsSpecifications;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class GabsService {
@@ -74,15 +75,32 @@ public class GabsService {
         return gabsRepository.save(gab);
     }
 
-    public List<Gabs> userTimeline(Long userId, Integer startIndex, Integer count){
-        List<Gabs> gabs = gabsRepository.findByUserId(userId);
-        gabs.sort(new Comparator<Gabs>() {
+    public List<GabsDTO> userTimeline(Long userId, Integer startIndex, Integer count){
+        List<Gabs> gabsEntities = gabsRepository.findByUserId(userId);
+        gabsEntities.sort(new Comparator<Gabs>() {
             @Override
             public int compare(Gabs o1, Gabs o2) {
                 if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return -1;
                 else if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return 1;
                 else return 0;
             }
+        });
+
+        List<GabsDTO> gabs = new ArrayList<>();
+        gabsEntities.stream().forEach(g -> {
+            GabsDTO gdto = new GabsDTO();
+            gdto.setContent(g.getContent());
+            gdto.setId(g.getId());
+            gdto.setPostDate(g.getPostDate());
+
+            g.getLikers().stream().forEach(l -> {
+                GabsLikerDTO ldto = new GabsLikerDTO();
+                ldto.setGabsID(l.getId());
+                ldto.setUsername(l.getNickname());
+                gdto.getLikers().add(ldto);
+            });
+
+            gabs.add(gdto);
         });
 
         try{
@@ -95,6 +113,58 @@ public class GabsService {
             }
         }
 
+    }
+
+    public List<GabsDTO> globalTimeline(String token, Integer startIndex, Integer count) throws UserNotFoundException, InvalidTokenException {
+        return globalTimeline(userService.findUserForToken(token).getId(), startIndex, count);
+    }
+
+    public List<GabsDTO> globalTimeline(Long userId, Integer startIndex, Integer count) throws UserNotFoundException {
+        User loggedUser = userService.findExistingUserById(userId);
+
+        Set<Long> followingsIDs = new HashSet<>();
+        loggedUser.getFollowings().stream().forEach((user) -> followingsIDs.add(user.getId()));
+
+        followingsIDs.add(userId);
+
+        //Récuperation des gabs
+        List<Gabs> gabsEntities = gabsRepository.findAll(GabsSpecifications.globalTimeline(followingsIDs));
+
+        gabsEntities.sort(new Comparator<Gabs>() {
+            @Override
+            public int compare(Gabs o1, Gabs o2) {
+                if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return -1;
+                else if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return 1;
+                else return 0;
+            }
+        });
+
+        List<GabsDTO> gabs = new ArrayList<>();
+        gabsEntities.stream().forEach(g -> {
+            GabsDTO gdto = new GabsDTO();
+            gdto.setContent(g.getContent());
+            gdto.setId(g.getId());
+            gdto.setPostDate(g.getPostDate());
+
+            g.getLikers().stream().forEach(l -> {
+                GabsLikerDTO ldto = new GabsLikerDTO();
+                ldto.setGabsID(l.getId());
+                ldto.setUsername(l.getNickname());
+                gdto.getLikers().add(ldto);
+            });
+
+            gabs.add(gdto);
+        });
+
+        try{
+            return gabs.subList(startIndex, startIndex+count);
+        } catch (IndexOutOfBoundsException e){
+            try{
+                return gabs.subList(startIndex, gabs.size());
+            } catch (IndexOutOfBoundsException e1){
+                return new ArrayList<>();
+            }
+        }
     }
 
 }
