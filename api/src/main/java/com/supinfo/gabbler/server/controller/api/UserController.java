@@ -12,6 +12,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -75,5 +76,12 @@ public class UserController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public List<User> update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "req") String searchRequest) {
         return userService.search(searchRequest);
+    }
+
+    @ApiOperation(value = "Upload profile picture", position = 9)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/picture/profile", method = RequestMethod.POST)
+    public void picture_profile_upload(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam("image") MultipartFile image) throws Exception {
+        userService.uploadProfilePicture(token, image);
     }
 }

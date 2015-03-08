@@ -6,19 +6,23 @@ import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
+import com.supinfo.gabbler.server.exception.file.FileEmptyException;
+import com.supinfo.gabbler.server.exception.file.UnsupportedFormatException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
-import com.supinfo.gabbler.server.repository.specifications.SpecificationsAndFactory;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.MathUtil;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Locale;
@@ -166,7 +170,27 @@ public class UserService {
         return userRepository.findAll(UserSpecifications.userLikeDisplayNameOrNickname(searchRequest));
     }
 
+    public void uploadProfilePicture(String token, MultipartFile file) throws Exception{
+        String contentType = file.getContentType();
+        if(!contentType.equals("image/png") && !contentType.equals("image/jpeg")){
+            throw new UnsupportedFormatException();
+        }
+
+        User user = findUserForToken(token);
+        byte[] imageBytes = getByteArrayFromMultipartFile(file);
+        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d", user.getId())), imageBytes);
+    }
+
     //END API calls
+
+    public byte[] getByteArrayFromMultipartFile(MultipartFile file) throws Exception{
+        if (!file.isEmpty()) {
+            byte[] bytes = file.getBytes();
+            return bytes;
+        } else {
+            throw new FileEmptyException();
+        }
+    }
 
     public User findExistingUserById(Long userId) throws UserNotFoundException {
         User toFindUser = findById(userId);
