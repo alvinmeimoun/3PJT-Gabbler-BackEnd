@@ -1,8 +1,10 @@
 package com.supinfo.gabbler.server.controller.api;
 
 import com.supinfo.gabbler.server.dto.ChangePassword;
+import com.supinfo.gabbler.server.dto.PictureDTO;
 import com.supinfo.gabbler.server.dto.Subscription;
 import com.supinfo.gabbler.server.entity.User;
+import com.supinfo.gabbler.server.exception.file.HandledFileNotFoundException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
@@ -15,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -83,5 +90,18 @@ public class UserController {
     @RequestMapping(value = "/picture/profile", method = RequestMethod.POST)
     public void picture_profile_upload(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam("image") MultipartFile image) throws Exception {
         userService.uploadProfilePicture(token, image);
+    }
+
+    @ApiOperation(value = "Get profile picture", position = 10)
+    @RequestMapping(value = "/picture/profile", method = RequestMethod.GET)
+    public void picture_profile_get(@RequestParam(value = "userID", required = true) Long userID, HttpServletResponse response) throws IOException, UserNotFoundException, HandledFileNotFoundException {
+        PictureDTO dto = userService.getProfilePicture(userID);
+
+        response.setContentType(dto.getContentType());
+
+        InputStream is = new FileInputStream(dto.getFile());
+
+        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+        response.flushBuffer();
     }
 }

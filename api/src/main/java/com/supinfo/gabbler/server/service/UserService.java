@@ -1,20 +1,23 @@
 package com.supinfo.gabbler.server.service;
 
 import com.supinfo.gabbler.server.dto.ChangePassword;
+import com.supinfo.gabbler.server.dto.PictureDTO;
 import com.supinfo.gabbler.server.dto.Subscription;
 import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.entity.enums.PasswordCryptMode;
 import com.supinfo.gabbler.server.exception.file.FileEmptyException;
+import com.supinfo.gabbler.server.exception.file.HandledFileNotFoundException;
 import com.supinfo.gabbler.server.exception.file.UnsupportedFormatException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
 import com.supinfo.gabbler.server.exception.login.OperationNotAllowedException;
 import com.supinfo.gabbler.server.exception.user.*;
 import com.supinfo.gabbler.server.repository.UserRepository;
 import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
-import com.supinfo.gabbler.server.utils.MathUtil;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
+import com.supinfo.gabbler.server.utils.FileUtil;
+import com.supinfo.gabbler.server.utils.MathUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -178,7 +181,22 @@ public class UserService {
 
         User user = findUserForToken(token);
         byte[] imageBytes = getByteArrayFromMultipartFile(file);
-        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d", user.getId())), imageBytes);
+        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d.%s", user.getId(),
+                FileUtil.getFileExtensionFromMimetype(contentType))), imageBytes);
+
+        user.setProfilePictureMimetype(contentType);
+        userRepository.save(user);
+    }
+
+    public PictureDTO getProfilePicture(Long userID) throws UserNotFoundException, HandledFileNotFoundException {
+        User user = findExistingUserById(userID);
+
+        if(user.getProfilePictureMimetype() == null) throw new HandledFileNotFoundException();
+
+        String contentType = user.getProfilePictureMimetype();
+
+        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d.%s", user.getId(),
+                FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
     }
 
     //END API calls

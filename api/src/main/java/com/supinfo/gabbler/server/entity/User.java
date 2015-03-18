@@ -63,6 +63,9 @@ public class User {
 
     private @NotNull Set<User> followers = new HashSet<>();
 
+    private String profilePictureMimetype;
+    private String backgroundPictureMimetype;
+
     //Spring security declaration
     @JsonIgnore
     private @NotNull Boolean enabled = true;
@@ -289,6 +292,28 @@ public class User {
 
     public User setFollowers(Set<User> followers) {
         this.followers = followers;
+        return this;
+    }
+
+    @Column(name = "PROFILE_PICTURE_MIMETYPE")
+    @Basic
+    public String getProfilePictureMimetype() {
+        return profilePictureMimetype;
+    }
+
+    public User setProfilePictureMimetype(String profilePictureMimetype) {
+        this.profilePictureMimetype = profilePictureMimetype;
+        return this;
+    }
+
+    @Column(name = "BACKGROUND_PICTURE_MIMETYPE")
+    @Basic
+    public String getBackgroundPictureMimetype() {
+        return backgroundPictureMimetype;
+    }
+
+    public User setBackgroundPictureMimetype(String backgroundPictureMimetype) {
+        this.backgroundPictureMimetype = backgroundPictureMimetype;
         return this;
     }
 
