@@ -23,7 +23,7 @@ public class LoginController {
 
     @ApiOperation(value = "Create a new session", position = 1)
     @RequestMapping(value = "/api/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public LoginResponse login(@RequestBody LoginInfo loginInfo) throws InvalidCredentialsException, UserNotFoundException {
+    public LoginResponse login(@RequestBody LoginInfo loginInfo) throws InvalidCredentialsException, UserNotFoundException, InvalidTokenException {
         return loginService.login(loginInfo);
     }
 

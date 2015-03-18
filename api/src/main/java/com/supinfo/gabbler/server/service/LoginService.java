@@ -24,7 +24,7 @@ public class LoginService {
     TokenService tokenService;
 
     @Transactional
-    public LoginResponse login(LoginInfo loginInfo) throws InvalidCredentialsException, UserNotFoundException {
+    public LoginResponse login(LoginInfo loginInfo) throws InvalidCredentialsException, UserNotFoundException, InvalidTokenException {
         if(loginInfo == null) throw new InvalidCredentialsException();
 
         boolean isValidCredentials = isValidCredentials(loginInfo.getUsername(), loginInfo.getPassword());
@@ -34,7 +34,10 @@ public class LoginService {
         Token newToken = generateTokenEntity(loginInfo.getUsername(), generateTokenString(loginInfo.getUsername()));
         tokenService.save(newToken);
 
-        return new LoginResponse().setToken(newToken.getSeries());
+        //Récupération du user
+        User loggedUser = userService.findUserForToken(newToken.getSeries());
+
+        return new LoginResponse().setToken(newToken.getSeries()).setUserID(loggedUser.getId());
     }
 
     @Transactional(readOnly = true)
