@@ -199,6 +199,32 @@ public class UserService {
                 FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
     }
 
+    public void uploadProfileBackgroundPicture(String token, MultipartFile file) throws Exception{
+        String contentType = file.getContentType();
+        if(!contentType.equals("image/png") && !contentType.equals("image/jpeg")){
+            throw new UnsupportedFormatException();
+        }
+
+        User user = findUserForToken(token);
+        byte[] imageBytes = getByteArrayFromMultipartFile(file);
+        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/background/%d.%s", user.getId(),
+                FileUtil.getFileExtensionFromMimetype(contentType))), imageBytes);
+
+        user.setBackgroundPictureMimetype(contentType);
+        userRepository.save(user);
+    }
+
+    public PictureDTO getProfileBackgroundPicture(Long userID) throws UserNotFoundException, HandledFileNotFoundException {
+        User user = findExistingUserById(userID);
+
+        if(user.getBackgroundPictureMimetype() == null) throw new HandledFileNotFoundException();
+
+        String contentType = user.getBackgroundPictureMimetype();
+
+        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/background/%d.%s", user.getId(),
+                FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
+    }
+
     //END API calls
 
     public byte[] getByteArrayFromMultipartFile(MultipartFile file) throws Exception{

@@ -104,4 +104,24 @@ public class UserController {
         org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
         response.flushBuffer();
     }
+
+    @ApiOperation(value = "Upload profile background picture", position = 11)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/picture/profile/background", method = RequestMethod.POST)
+    public void picture_profile_background_upload(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam("image") MultipartFile image) throws Exception {
+        userService.uploadProfileBackgroundPicture(token, image);
+    }
+
+    @ApiOperation(value = "Get profile background picture", position = 12)
+    @RequestMapping(value = "/picture/profile/background", method = RequestMethod.GET)
+    public void picture_profile_background_get(@RequestParam(value = "userID", required = true) Long userID, HttpServletResponse response) throws IOException, UserNotFoundException, HandledFileNotFoundException {
+        PictureDTO dto = userService.getProfileBackgroundPicture(userID);
+
+        response.setContentType(dto.getContentType());
+
+        InputStream is = new FileInputStream(dto.getFile());
+
+        org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+        response.flushBuffer();
+    }
 }
