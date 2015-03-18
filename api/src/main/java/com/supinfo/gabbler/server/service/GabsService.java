@@ -102,8 +102,8 @@ public class GabsService {
 
             g.getLikers().stream().forEach(l -> {
                 GabsLikerDTO ldto = new GabsLikerDTO();
-                ldto.setGabsID(l.getId());
-                ldto.setUsername(l.getNickname());
+                ldto.setUserID(l.getId());
+                ldto.setDisplayName(l.getDisplayName());
                 gdto.getLikers().add(ldto);
             });
 
@@ -162,8 +162,8 @@ public class GabsService {
 
             g.getLikers().stream().forEach(l -> {
                 GabsLikerDTO ldto = new GabsLikerDTO();
-                ldto.setGabsID(l.getId());
-                ldto.setUsername(l.getNickname());
+                ldto.setUserID(l.getId());
+                ldto.setDisplayName(l.getDisplayName());
                 gdto.getLikers().add(ldto);
             });
 

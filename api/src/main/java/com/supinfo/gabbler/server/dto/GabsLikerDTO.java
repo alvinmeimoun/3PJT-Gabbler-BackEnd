@@ -5,22 +5,23 @@ package com.supinfo.gabbler.server.dto;
  */
 public class GabsLikerDTO {
 
-    private String username;
+    private String displayName;
     private Long gabsID;
+    private Long userID;
 
-    public String getUsername() {
-        return username;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public Long getGabsID() {
-        return gabsID;
+    public Long getUserID() {
+        return userID;
     }
 
-    public void setGabsID(Long gabsID) {
-        this.gabsID = gabsID;
+    public void setUserID(Long userID) {
+        this.userID = userID;
     }
 }
