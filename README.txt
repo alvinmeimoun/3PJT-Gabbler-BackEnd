@@ -22,10 +22,18 @@ Ce projet utilise un wrapper Gradle, il n'est donc pas nécéssaire de disposer 
 
 
 
-# Démarrer le programme
+# Etape 3 / Démarrer le programme
 
 - Ouvrir un terminal et se placer à la racine du projet
 - Entrer la commande 'gradlew :api:clean tomcatRunWar --stacktrace --info'
 
 L'api est accéssible à l'URL 'http://127.0.0.1:8082/gabbler/'
 Une documentation est généré à l'URL 'http://127.0.0.1:8082/gabbler/sdoc.jsp'
+
+
+# Etape 4 : Insérer le jeu de données
+
+Le programme doit être démarré au moins une fois avant l'insertion du jeu de données afin qu'il crée automatiquement les tables.
+
+ - Executer le script d'insertion du jeu données
+   Emplacement du script : api/insert_dev_data_mysql.sql
