@@ -35,3 +35,6 @@ build/
 bin/
 out/
 classes/
+
+#Atlassian
+atlassian-ide-plugin.xml
