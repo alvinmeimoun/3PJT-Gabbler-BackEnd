@@ -59,8 +59,10 @@ public class User {
     private @NotNull
     PasswordCryptMode passwordCryptMode = PasswordCryptMode.Plain;
 
+    @JsonIgnore
     private @NotNull Set<User> followings = new HashSet<>();
 
+    @JsonIgnore
     private @NotNull Set<User> followers = new HashSet<>();
 
     private String profilePictureMimetype;
