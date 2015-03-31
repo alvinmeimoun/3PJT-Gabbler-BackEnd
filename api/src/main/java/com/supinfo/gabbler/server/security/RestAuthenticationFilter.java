@@ -56,7 +56,7 @@ public class RestAuthenticationFilter extends GenericFilterBean {
             if(response instanceof HttpServletResponse){
                 HttpServletResponse  httpResponse = (HttpServletResponse)response;
                 httpResponse.setHeader("Access-Control-Allow-Origin", "*");
-                httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+                httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
                 httpResponse.setHeader("Access-Control-Max-Age", "3600");
                 httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Authorization, X-Requested-With, sessionAuthToken  ");
                 response = httpResponse;
