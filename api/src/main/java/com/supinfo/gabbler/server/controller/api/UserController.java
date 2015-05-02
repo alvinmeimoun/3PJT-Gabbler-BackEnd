@@ -3,6 +3,7 @@ package com.supinfo.gabbler.server.controller.api;
 import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.PictureDTO;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.dto.UserSearchResult;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.file.HandledFileNotFoundException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
@@ -81,8 +82,8 @@ public class UserController {
     @ApiOperation(value = "Search user by displayName or nickname", position = 8)
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public List<User> update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "req") String searchRequest) {
-        return userService.search(searchRequest);
+    public List<UserSearchResult> update(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "req") String searchRequest) {
+        return userService.search(token, searchRequest);
     }
 
     @ApiOperation(value = "Upload profile picture", position = 9)

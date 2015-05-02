@@ -3,6 +3,7 @@ package com.supinfo.gabbler.server.service;
 import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.PictureDTO;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.dto.UserSearchResult;
 import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -170,8 +172,37 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> search(String searchRequest){
-        return userRepository.findAll(UserSpecifications.userLikeDisplayNameOrNickname(searchRequest));
+    public List<UserSearchResult> search(String token, String searchRequest){
+        List<User> foundEntities = userRepository.findAll(UserSpecifications.userLikeDisplayNameOrNickname(searchRequest));
+        List<UserSearchResult> results = new ArrayList<>();
+
+        User currentUser = null;
+        if(token != null){
+            try{
+                currentUser = findUserForToken(token);
+            } catch (InvalidTokenException|UserNotFoundException e){
+
+            }
+        }
+
+        final User currentUserRef = currentUser;
+
+
+        foundEntities.forEach(e -> { UserSearchResult r  = new UserSearchResult().setBackgroundPictureMimetype(e.getBackgroundPictureMimetype())
+            .setBirthdate(e.getBirthdate()).setCreationDate(e.getCreationDate()).setDisplayName(e.getDisplayName()).setEmail(e.getEmail())
+            .setFirstname(e.getFirstname()).setGender(e.getGender()).setId(e.getId()).setLastname(e.getLastname())
+            .setNickname(e.getNickname()).setPhone(e.getPhone()).setPhoneIndicator(e.getPhoneIndicator())
+            .setProfilePictureMimetype(e.getProfilePictureMimetype());
+
+            if(currentUserRef == null) r.setIsFollowing(false);
+            else {
+                r.setIsFollowing(currentUserRef.getFollowings().contains(e));
+            }
+
+            results.add(r);
+        });
+
+        return results;
     }
 
     public void uploadProfilePicture(String token, MultipartFile file) throws Exception{
