@@ -34,7 +34,7 @@ public class GabsController {
 
     @ApiOperation(value = "Delete a gabs", position = 2)
     @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE, consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = "application/json")
     public void delete(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "gabsId", required = true) Long gabsId) throws UserNotFoundException, OperationNotAllowedException, ResourceNotFoundException, InvalidTokenException {
         gabsService.delete(token, gabsId);
     }

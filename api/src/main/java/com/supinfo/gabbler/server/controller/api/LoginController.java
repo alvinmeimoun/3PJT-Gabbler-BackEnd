@@ -29,7 +29,7 @@ public class LoginController {
 
     @ApiOperation(value = "Logout current session")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @RequestMapping(value = "/api/logout", method = RequestMethod.GET, consumes = "application/json")
+    @RequestMapping(value = "/api/logout", method = RequestMethod.GET)
     public void logout(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token) throws InvalidTokenException {
         loginService.logout(token);
     }
