@@ -25,6 +25,8 @@ public class GabsDTO {
 
     private @NotNull String displayName;
 
+    private @NotNull String userName;
+
     public GabsDTO(){
         this.likers = new HashSet<>();
     }
@@ -75,5 +77,13 @@ public class GabsDTO {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

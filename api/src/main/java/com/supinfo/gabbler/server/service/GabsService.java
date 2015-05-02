@@ -93,10 +93,13 @@ public class GabsService {
             gdto.setId(g.getId());
             gdto.setPostDate(g.getPostDate());
             try {
-                gdto.setDisplayName(userService.findExistingUserById(g.getUserId()).getDisplayName());
+                User fu = userService.findExistingUserById(g.getUserId());
+                gdto.setDisplayName(fu.getDisplayName());
+                gdto.setUserName(fu.getNickname());
             } catch (UserNotFoundException e) {
                 e.printStackTrace();
                 gdto.setDisplayName("Utilisateur Inconnu");
+                gdto.setUserName("");
             }
 
 
@@ -154,10 +157,13 @@ public class GabsService {
             gdto.setUserId(g.getUserId());
             gdto.setPostDate(g.getPostDate());
             try {
-                gdto.setDisplayName(userService.findExistingUserById(g.getUserId()).getDisplayName());
+                User fu = userService.findExistingUserById(g.getUserId());
+                gdto.setDisplayName(fu.getDisplayName());
+                gdto.setUserName(fu.getNickname());
             } catch (UserNotFoundException e) {
                 e.printStackTrace();
                 gdto.setDisplayName("Utilisateur Inconnu");
+                gdto.setUserName("");
             }
 
             g.getLikers().stream().forEach(l -> {
