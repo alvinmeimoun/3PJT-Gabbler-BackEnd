@@ -18,7 +18,8 @@ Note : Ces trois étapes peuvent être réunis en une depuis phpMyAdmin
 Ce projet utilise un wrapper Gradle, il n'est donc pas nécéssaire de disposer de gradle sur son environnement afin d'éxécuter le programme.
 
 - Ouvrir un terminal et se placer à la racine du projet
-- Entrer la commande suivante "gradlew"
+- Entrer la commande suivante ‘./gradlew’ (‘gradlew’ sous l’invite de commande Windows)
+- Si l’erreur ‘Permission denied’ est affiché, entrez la commande ‘chmod +x gradle’ puis réessayer.
 
 
 
