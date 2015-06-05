@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -25,6 +26,7 @@ public class LoginServiceTest {
     public static final User USER_PASSWORD_CRYPTED = new User().setNickname("test1").setPassword(PASSWORD_TEST_CRYPTED);
     public static final String TOKEN_STRING_1 = "0a12756881be6c0094e4f05b3bf9f2072d788784421bf94a9c0ed448e05ed886";
     public static final String WRONG_PASSWORD_1 = "ttes";
+    public static final String TOKEN_LOGGED_USER_VALID = "ba45c8df2e517425b081c0c8bd7f7a32576bc9106acf8b953fbce0bbe0b0aae2";
 
     @Mock
     TokenService tokenService;
@@ -36,10 +38,11 @@ public class LoginServiceTest {
     LoginService loginService;
 
     @Before
-    public void setUp() throws UserNotFoundException {
+    public void setUp() throws UserNotFoundException, InvalidTokenException {
         Mockito.reset(userService);
 
         Mockito.when(userService.findByNickname(eq(USER_PASSWORD_PLAIN.getNickname()))).thenReturn(USER_PASSWORD_CRYPTED);
+        Mockito.when(userService.findUserForToken(any(String.class))).thenReturn(USER_PASSWORD_CRYPTED);
     }
 
     @Test
