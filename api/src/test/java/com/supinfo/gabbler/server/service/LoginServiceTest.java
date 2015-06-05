@@ -68,23 +68,23 @@ public class LoginServiceTest {
     }
 
     @Test(expected = InvalidCredentialsException.class)
-    public void should_not_login_and_throw_exception_if_loginInfo_is_null() throws InvalidCredentialsException, UserNotFoundException {
+    public void should_not_login_and_throw_exception_if_loginInfo_is_null() throws InvalidCredentialsException, UserNotFoundException, InvalidTokenException {
         loginService.login(null);
     }
 
     @Test(expected = InvalidCredentialsException.class)
-    public void should_not_login_and_throw_exception_if_wrong_credentials() throws InvalidCredentialsException, UserNotFoundException {
+    public void should_not_login_and_throw_exception_if_wrong_credentials() throws InvalidCredentialsException, UserNotFoundException, InvalidTokenException {
         loginService.login(new LoginInfo().setUsername(USER_PASSWORD_CRYPTED.getNickname()).setPassword(WRONG_PASSWORD_1));
     }
 
 
     @Test(expected = UserNotFoundException.class)
-    public void should_not_login_and_throw_user_not_found_exception() throws UserNotFoundException, InvalidCredentialsException {
+    public void should_not_login_and_throw_user_not_found_exception() throws UserNotFoundException, InvalidCredentialsException, InvalidTokenException {
         loginService.login(new LoginInfo().setUsername(USER_SHOULD_RETURN_NULL.getNickname()).setPassword(USER_SHOULD_RETURN_NULL.getPassword()));
     }
 
     @Test
-    public void should_login_and_return_token() throws InvalidCredentialsException, UserNotFoundException {
+    public void should_login_and_return_token() throws InvalidCredentialsException, UserNotFoundException, InvalidTokenException {
         assertThat(loginService.login(new LoginInfo().setUsername(USER_PASSWORD_PLAIN.getNickname()).setPassword(USER_PASSWORD_PLAIN.getPassword()))).isNotNull();
     }
 
