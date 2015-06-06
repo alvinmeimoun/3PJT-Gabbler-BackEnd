@@ -1,9 +1,6 @@
 package com.supinfo.gabbler.server.controller.api;
 
-import com.supinfo.gabbler.server.dto.ChangePassword;
-import com.supinfo.gabbler.server.dto.PictureDTO;
-import com.supinfo.gabbler.server.dto.Subscription;
-import com.supinfo.gabbler.server.dto.UserSearchResult;
+import com.supinfo.gabbler.server.dto.*;
 import com.supinfo.gabbler.server.entity.User;
 import com.supinfo.gabbler.server.exception.file.HandledFileNotFoundException;
 import com.supinfo.gabbler.server.exception.login.InvalidTokenException;
@@ -68,8 +65,8 @@ public class UserController {
     @ApiOperation(value = "Get user informations", position = 6)
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public User get(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId) throws UserNotFoundException, InvalidTokenException {
-        return userService.getUserInformations(token, userId);
+    public UserInfoDTO get(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "userId") Long userId) throws UserNotFoundException, InvalidTokenException {
+        return userService.getUserInfoDtoFromUserEntity(userService.getUserInformations(token, userId));
     }
 
     @ApiOperation(value = "Update user informations", position = 7)

@@ -1,9 +1,6 @@
 package com.supinfo.gabbler.server.service;
 
-import com.supinfo.gabbler.server.dto.ChangePassword;
-import com.supinfo.gabbler.server.dto.PictureDTO;
-import com.supinfo.gabbler.server.dto.Subscription;
-import com.supinfo.gabbler.server.dto.UserSearchResult;
+import com.supinfo.gabbler.server.dto.*;
 import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
@@ -276,6 +273,26 @@ public class UserService {
         }
 
         return toFindUser;
+    }
+
+    public UserInfoDTO getUserInfoDtoFromUserEntity(User entity){
+        return new UserInfoDTO()
+                .setBackgroundPictureMimetype(entity.getBackgroundPictureMimetype())
+                .setBirthdate(entity.getBirthdate())
+                .setCreationDate(entity.getCreationDate())
+                .setDisplayName(entity.getDisplayName())
+                .setEmail(entity.getEmail())
+                .setEmailValidated(entity.isEmailValidated())
+                .setFirstname(entity.getFirstname())
+                .setGender(entity.getGender())
+                .setId(entity.getId())
+                .setLastname(entity.getLastname())
+                .setNbFollowers(entity.getFollowers().size())
+                .setNbFollowings(entity.getFollowings().size())
+                .setNickname(entity.getNickname())
+                .setPhone(entity.getPhone())
+                .setPhoneIndicator(entity.getPhoneIndicator())
+                .setProfilePictureMimetype(entity.getProfilePictureMimetype());
     }
 
     /* REPOSITORY INTERFACE */
