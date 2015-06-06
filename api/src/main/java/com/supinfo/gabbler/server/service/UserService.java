@@ -16,6 +16,7 @@ import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
 import com.supinfo.gabbler.server.utils.FileUtil;
 import com.supinfo.gabbler.server.utils.MathUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,8 +53,9 @@ public class UserService {
     @Autowired RoleService roleService;
 
     @Transactional
-    public User subscribe(Subscription subscription) throws UserAlreadyExistsException {
+    public User subscribe(Subscription subscription) throws UserAlreadyExistsException, IOException {
         List<User> testUserExistL = userRepository.findByEmailOrNickname(subscription.getEmail(), subscription.getNickname());
+        User returnUser = null;
 
         if(testUserExistL != null && testUserExistL.size() > 0){
             throw new UserAlreadyExistsException();
@@ -66,7 +75,30 @@ public class UserService {
         Role userRole = roleService.findOrCreateUserRole();
         newUser.addRoles(userRole);
 
-        return save(newUser);
+        //Récupération de la photo de profil depuis gravatar
+        try{
+            String gravatarUrlStr = String.format("http://www.gravatar.com/avatar/%s.jpg?d=mm", DigestUtils.md5Hex(subscription.getEmail()));
+            URL gravatarUrl = new URL(gravatarUrlStr);
+
+            File profileImageFile = new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%s.%s", newUser.getNickname(),
+                    FileUtil.getFileExtensionFromMimetype("image/jpeg")));
+            if(!profileImageFile.exists()) {
+                new File(FileUtils.getUserDirectoryPath() + "/Gabbler/picture/profile/").mkdirs();
+                profileImageFile.createNewFile();
+            }
+
+            ReadableByteChannel rbc = Channels.newChannel(gravatarUrl.openStream());
+            FileOutputStream fosImageProfile = new FileOutputStream(profileImageFile);
+            fosImageProfile.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+
+            newUser.setProfilePictureMimetype("image/jpeg");
+        } catch (Exception ex){
+            System.out.println("Erreur lors de l'obtention du gravatar : ");
+            ex.printStackTrace();
+        }
+
+        returnUser = save(newUser);
+        return returnUser;
     }
 
     @Transactional
@@ -210,7 +242,7 @@ public class UserService {
 
         User user = findUserForToken(token);
         byte[] imageBytes = getByteArrayFromMultipartFile(file);
-        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d.%s", user.getId(),
+        FileUtils.writeByteArrayToFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%s.%s", user.getNickname(),
                 FileUtil.getFileExtensionFromMimetype(contentType))), imageBytes);
 
         user.setProfilePictureMimetype(contentType);
@@ -224,7 +256,7 @@ public class UserService {
 
         String contentType = user.getProfilePictureMimetype();
 
-        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%d.%s", user.getId(),
+        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%s.%s", user.getNickname(),
                 FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
     }
 

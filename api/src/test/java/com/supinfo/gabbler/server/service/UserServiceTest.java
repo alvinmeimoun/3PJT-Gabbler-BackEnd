@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
@@ -84,12 +85,12 @@ public class UserServiceTest {
     }
 
     @Test(expected = UserAlreadyExistsException.class)
-    public void should_fail_when_email_or_nickname_exist() throws UserAlreadyExistsException {
+    public void should_fail_when_email_or_nickname_exist() throws UserAlreadyExistsException, IOException {
         userService.subscribe(USER_SUBCRIPTION_DUPLICATED);
     }
 
     @Test
-    public void should_subscribe_user() throws UserAlreadyExistsException{
+    public void should_subscribe_user() throws UserAlreadyExistsException, IOException {
         User rUserId = userService.subscribe(USER_SUBSCRIPTION);
         assertThat(rUserId).isNull();
     }

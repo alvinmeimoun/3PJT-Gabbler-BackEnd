@@ -35,7 +35,7 @@ public class UserController {
 
     @ApiOperation(value = "Register a new user", position = 1)
     @RequestMapping(value = "/subscribe", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public Long subscribe(@RequestBody Subscription subscription) throws UserAlreadyExistsException {
+    public Long subscribe(@RequestBody Subscription subscription) throws UserAlreadyExistsException, IOException {
         return userService.subscribe(subscription).getId();
     }
 
