@@ -19,22 +19,20 @@ import com.supinfo.gabbler.server.utils.MathUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -275,15 +273,23 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public PictureDTO getProfileBackgroundPicture(Long userID) throws UserNotFoundException, HandledFileNotFoundException {
+    public PictureDTO getProfileBackgroundPicture(Long userID) throws UserNotFoundException, IOException {
         User user = findExistingUserById(userID);
+        File fileToRead;
+        String contentType;
 
-        if(user.getBackgroundPictureMimetype() == null) throw new HandledFileNotFoundException();
+        if(user.getBackgroundPictureMimetype() == null){
+            //Return default profile
+            ClassPathResource resource = new ClassPathResource("images/profile_cover_default.jpg");
+            fileToRead = resource.getFile();
+            contentType = "image/jpeg";
+        } else {
+            contentType = user.getBackgroundPictureMimetype();
+            fileToRead = new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/background/%d.%s", user.getId(),
+                    FileUtil.getFileExtensionFromMimetype(contentType)));
+        }
 
-        String contentType = user.getBackgroundPictureMimetype();
-
-        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/background/%d.%s", user.getId(),
-                FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
+        return new PictureDTO().setFile(fileToRead).setContentType(contentType);
     }
 
     //END API calls
