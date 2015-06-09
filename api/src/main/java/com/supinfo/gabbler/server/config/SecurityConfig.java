@@ -3,6 +3,7 @@ package com.supinfo.gabbler.server.config;
 import com.supinfo.gabbler.server.security.RestAccessDeniedHandler;
 import com.supinfo.gabbler.server.security.RestAuthenticationEntryPoint;
 import com.supinfo.gabbler.server.security.RestAuthenticationFilter;
+import com.supinfo.gabbler.server.security.SimpleCORSFilter;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -47,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder())
         .and().jdbcAuthentication();
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -61,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
-                .authenticationEntryPoint(authenticationEntryPoint());
+                .authenticationEntryPoint(authenticationEntryPoint())
+        .and().addFilterAfter(new SimpleCORSFilter(), LogoutFilter.class);
     }
 
     @Bean
