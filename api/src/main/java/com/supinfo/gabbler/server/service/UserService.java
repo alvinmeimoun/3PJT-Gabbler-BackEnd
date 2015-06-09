@@ -73,7 +73,7 @@ public class UserService {
         Role userRole = roleService.findOrCreateUserRole();
         newUser.addRoles(userRole);
 
-        //Récupération de la photo de profil depuis gravatar
+        /*//Récupération de la photo de profil depuis gravatar
         try{
             String gravatarUrlStr = String.format("http://www.gravatar.com/avatar/%s.jpg?d=mm", DigestUtils.md5Hex(subscription.getEmail()));
             URL gravatarUrl = new URL(gravatarUrlStr);
@@ -93,7 +93,7 @@ public class UserService {
         } catch (Exception ex){
             System.out.println("Erreur lors de l'obtention du gravatar : ");
             ex.printStackTrace();
-        }
+        }*/
 
         returnUser = save(newUser);
         return returnUser;
@@ -247,15 +247,24 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public PictureDTO getProfilePicture(Long userID) throws UserNotFoundException, HandledFileNotFoundException {
+    public PictureDTO getProfilePicture(Long userID) throws UserNotFoundException, HandledFileNotFoundException, IOException {
         User user = findExistingUserById(userID);
 
-        if(user.getProfilePictureMimetype() == null) throw new HandledFileNotFoundException();
+        File fileToRead;
+        String contentType;
 
-        String contentType = user.getProfilePictureMimetype();
+        if(user.getProfilePictureMimetype() == null){
+            //Return default profile
+            ClassPathResource resource = new ClassPathResource("images/profile_picture_default.jpg");
+            fileToRead = resource.getFile();
+            contentType = "image/jpeg";
+        } else {
+            contentType = user.getProfilePictureMimetype();
+            fileToRead = new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%s.%s", user.getNickname(),
+                    FileUtil.getFileExtensionFromMimetype(contentType)));
+        }
 
-        return new PictureDTO().setFile(new File(FileUtils.getUserDirectoryPath() + String.format("/Gabbler/picture/profile/%s.%s", user.getNickname(),
-                FileUtil.getFileExtensionFromMimetype(contentType)))).setContentType(contentType);
+        return new PictureDTO().setFile(fileToRead).setContentType(contentType);
     }
 
     public void uploadProfileBackgroundPicture(String token, MultipartFile file) throws Exception{
