@@ -122,4 +122,11 @@ public class UserController {
         org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
         response.flushBuffer();
     }
+
+    @ApiOperation(value = "Get random users")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @RequestMapping(value = "/recommended", method = RequestMethod.GET)
+    public List<UserInfoDTO> get_recommended_users(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
+        return userService.getRecommandedUsers(limit);
+    }
 }

@@ -3,6 +3,7 @@ package com.supinfo.gabbler.server.repository;
 import com.supinfo.gabbler.server.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
