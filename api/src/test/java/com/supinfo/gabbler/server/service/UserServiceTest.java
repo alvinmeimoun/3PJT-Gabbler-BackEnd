@@ -2,6 +2,7 @@ package com.supinfo.gabbler.server.service;
 
 import com.supinfo.gabbler.server.dto.ChangePassword;
 import com.supinfo.gabbler.server.dto.Subscription;
+import com.supinfo.gabbler.server.dto.UserInfoDTO;
 import com.supinfo.gabbler.server.entity.Role;
 import com.supinfo.gabbler.server.entity.Token;
 import com.supinfo.gabbler.server.entity.User;
@@ -21,10 +22,12 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNotNull;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,6 +80,8 @@ public class UserServiceTest {
 
         Mockito.when(tokenService.findOne(TOKEN_FOUND_STR)).thenReturn(TOKEN_FOUND);
         Mockito.when(tokenService.findOne(TOKEN_USER_NOT_FOUND.getSeries())).thenReturn(TOKEN_USER_NOT_FOUND);
+
+        Mockito.when(userRepository.findAll()).thenReturn(Arrays.asList(new User[]{USER_FOLLOWED, USER_DUPLICATED, USER_NOT_FOLLOWED, USER_SHOULD_RETURN_NULL}));
     }
 
     @Test
@@ -179,5 +184,15 @@ public class UserServiceTest {
     @Test(expected = UserNotFollowedException.class)
     public void should_try_to_unfollow_user_not_followed_and_throw_exception() throws UserNotFoundException, InvalidTokenException, UserNotFollowedException, UserAlreadyFollowedException {
         userService.unfollow(TOKEN_FOUND_STR, USER_NOT_FOLLOWED.getId());
+    }
+
+    @Test
+    public void should_find_1_random_user(){
+        assertThat(userService.getRecommandedUsers(null, 1)).isNotNull().hasSize(1);
+    }
+
+    @Test
+    public void should_find_max_random_user(){
+        assertThat(userService.getRecommandedUsers(null, 300)).isNotNull().hasSize(4);
     }
 }

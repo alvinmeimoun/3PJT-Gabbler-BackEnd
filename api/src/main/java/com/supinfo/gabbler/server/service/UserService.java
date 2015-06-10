@@ -16,7 +16,6 @@ import com.supinfo.gabbler.server.repository.specifications.UserSpecifications;
 import com.supinfo.gabbler.server.utils.EncryptionUtil;
 import com.supinfo.gabbler.server.utils.FileUtil;
 import com.supinfo.gabbler.server.utils.MathUtil;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -26,15 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * @author Alvin Meimoun
@@ -340,6 +333,46 @@ public class UserService {
                 .setPhone(entity.getPhone())
                 .setPhoneIndicator(entity.getPhoneIndicator())
                 .setProfilePictureMimetype(entity.getProfilePictureMimetype());
+    }
+
+    public List<UserInfoDTO> getUserInfoDTOListFromUserEntityList(List<User> entities){
+        List<UserInfoDTO> rList = new ArrayList<>();
+
+        entities.forEach(e -> rList.add(getUserInfoDtoFromUserEntity(e)));
+
+        return rList;
+    }
+
+    public List<UserInfoDTO> getRecommandedUsers(String token, int limit){
+        User currentUser = null;
+        if(token != null){
+            try {
+                currentUser = findUserForToken(token);
+            } catch (InvalidTokenException e) {
+                //e.printStackTrace();
+            } catch (UserNotFoundException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        List<User> allUsers = new LinkedList<>(userRepository.findAll());
+
+        if(allUsers.size() <= limit){
+            limit = allUsers.size();
+        }
+
+        List<UserInfoDTO> randomUsers = new ArrayList<>();
+        Random rand = new Random();
+
+        for(int i = 0; i < limit; i++){
+            int indexToPick = rand.nextInt(limit-i);
+            User userPicked = allUsers.get(indexToPick);
+
+            if(currentUser == null || !currentUser.getFollowings().contains(userPicked)) randomUsers.add(getUserInfoDtoFromUserEntity(userPicked));
+            allUsers.remove(userPicked);
+        }
+
+        return randomUsers;
     }
 
     /* REPOSITORY INTERFACE */

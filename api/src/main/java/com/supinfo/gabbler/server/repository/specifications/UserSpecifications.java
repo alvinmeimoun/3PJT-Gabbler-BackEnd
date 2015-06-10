@@ -12,4 +12,5 @@ public class UserSpecifications {
     public static Specification<User> userLikeDisplayNameOrNickname(final String req){
         return (root, query, builder) -> builder.or(builder.like(builder.lower(root.get("displayName")), "%"+req.toLowerCase()+"%"), builder.like(builder.lower(root.get("nickname")), "%"+req.toLowerCase()+"%"));
     }
+
 }
