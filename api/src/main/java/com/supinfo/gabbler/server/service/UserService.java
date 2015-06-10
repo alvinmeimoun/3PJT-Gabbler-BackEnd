@@ -343,11 +343,22 @@ public class UserService {
         return rList;
     }
 
-    public List<UserInfoDTO> getRecommandedUsers(int limit){
+    public List<UserInfoDTO> getRecommandedUsers(String token, int limit){
+        User currentUser = null;
+        if(token != null){
+            try {
+                currentUser = findUserForToken(token);
+            } catch (InvalidTokenException e) {
+                //e.printStackTrace();
+            } catch (UserNotFoundException e) {
+                //e.printStackTrace();
+            }
+        }
+
         List<User> allUsers = new LinkedList<>(userRepository.findAll());
 
         if(allUsers.size() <= limit){
-            return getUserInfoDTOListFromUserEntityList(allUsers);
+            limit = allUsers.size();
         }
 
         List<UserInfoDTO> randomUsers = new ArrayList<>();
@@ -357,7 +368,7 @@ public class UserService {
             int indexToPick = rand.nextInt(limit-i);
             User userPicked = allUsers.get(indexToPick);
 
-            randomUsers.add(getUserInfoDtoFromUserEntity(userPicked));
+            if(currentUser == null || !currentUser.getFollowings().contains(userPicked)) randomUsers.add(getUserInfoDtoFromUserEntity(userPicked));
             allUsers.remove(userPicked);
         }
 

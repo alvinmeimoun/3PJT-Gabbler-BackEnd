@@ -188,11 +188,11 @@ public class UserServiceTest {
 
     @Test
     public void should_find_1_random_user(){
-        assertThat(userService.getRecommandedUsers(1)).isNotNull().hasSize(1);
+        assertThat(userService.getRecommandedUsers(null, 1)).isNotNull().hasSize(1);
     }
 
     @Test
     public void should_find_max_random_user(){
-        assertThat(userService.getRecommandedUsers(300)).isNotNull().hasSize(4);
+        assertThat(userService.getRecommandedUsers(null, 300)).isNotNull().hasSize(4);
     }
 }
