@@ -3,9 +3,9 @@ apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
 apply plugin: 'idea'
 
-def jdk8 = '1.8'
-sourceCompatibility = jdk8
-targetCompatibility = jdk8
+def jdkVersionProject = '1.8'
+sourceCompatibility = jdkVersionProject
+targetCompatibility = jdkVersionProject
 version = '1.0'
 
 buildscript{
@@ -98,7 +98,7 @@ dependencies {
 
 war {
     baseName = 'gabbler-api'
-    version =  '0.6.6'
+    version =  '1.0.0'
 }
 
 tomcat {
@@ -113,6 +113,6 @@ tomcatRunWar {
 
 idea {
     module {
-        jdkName = jdk8
+        jdkName = jdkVersionProject
     }
 }
