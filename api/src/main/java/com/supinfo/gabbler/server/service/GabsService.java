@@ -112,6 +112,11 @@ public class GabsService {
 
             gabs.add(gdto);
         });
+        gabs.sort((o1, o2) -> {
+            if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return -1;
+            else if(o1.getPostDate().getTime() == o2.getPostDate().getTime()) return 0;
+            else return 1;
+        });
 
         try{
             return gabs.subList(startIndex, startIndex+count);
@@ -174,6 +179,11 @@ public class GabsService {
             });
 
             gabs.add(gdto);
+        });
+        gabs.sort((o1, o2) -> {
+            if(o1.getPostDate().getTime() > o2.getPostDate().getTime()) return -1;
+            else if(o1.getPostDate().getTime() == o2.getPostDate().getTime()) return 0;
+            else return 1;
         });
 
         try{
