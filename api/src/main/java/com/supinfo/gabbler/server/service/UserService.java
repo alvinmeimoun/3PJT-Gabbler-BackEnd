@@ -178,18 +178,23 @@ public class UserService {
             throw new OperationNotAllowedException();
         }
 
-        //Set JSON ignored and constant values to new user
-        user.setPassword(loggedUser.getPassword()).setActivationCode(loggedUser.getActivationCode())
-                .setPasswordCryptMode(loggedUser.getPasswordCryptMode())
-                .setEnabled(loggedUser.isEnabled())
-                .setAccountNonExpired(loggedUser.isAccountNonExpired())
-                .setCredentialsNonExpired(loggedUser.isCredentialsNonExpired())
-                .setAccountNonLocked(loggedUser.isAccountNonLocked())
-                .setRoles(loggedUser.getRoles())
-                .setNickname(loggedUser.getNickname());
+//        //Set JSON ignored and constant values to new user
+//        user.setPassword(loggedUser.getPassword()).setActivationCode(loggedUser.getActivationCode())
+//                .setPasswordCryptMode(loggedUser.getPasswordCryptMode())
+//                .setEnabled(loggedUser.isEnabled())
+//                .setAccountNonExpired(loggedUser.isAccountNonExpired())
+//                .setCredentialsNonExpired(loggedUser.isCredentialsNonExpired())
+//                .setAccountNonLocked(loggedUser.isAccountNonLocked())
+//                .setRoles(loggedUser.getRoles())
+//                .setNickname(loggedUser.getNickname());
+//
+//        //update
+//        return userRepository.save(user);
 
-        //update
-        return userRepository.save(user);
+        loggedUser.setDisplayName(user.getDisplayName()).setFirstname(user.getFirstname()).setLastname(user.getLastname())
+                .setBirthdate(user.getBirthdate()).setEmail(user.getEmail());
+
+        return userRepository.save(loggedUser);
     }
 
     public List<UserSearchResult> search(String token, String searchRequest){

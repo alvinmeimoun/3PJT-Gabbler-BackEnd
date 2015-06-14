@@ -126,7 +126,7 @@ public class UserController {
     @ApiOperation(value = "Get random users")
     @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping(value = "/recommended", method = RequestMethod.GET)
-    public List<UserInfoDTO> get_recommended_users(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "limit", required = false, defaultValue = "10") int limit) {
+    public List<UserInfoDTO> get_recommended_users(@RequestHeader(value = AuthHeaderUtil.TOKEN_HEADER_NAME) String token, @RequestParam(value = "limit", required = false, defaultValue = "6") int limit) {
         return userService.getRecommandedUsers(token, limit);
     }
 }
